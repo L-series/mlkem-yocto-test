@@ -1,0 +1,57 @@
+
+machine: qemuarm
+distro: poky
+target:
+  - multiconfig:aarch64:core-image-minimal
+  - multiconfig:x86:core-image-minimal
+  - multiconfig:riscv64:core-image-minimal
+
+bblayers_conf_header:
+  meta-crypto-test: |
+    BBLAYERS:append = " ${TOPDIR}/../sources/meta-crypto-test"
+
+local_conf_header:
+  multiconfig: |
+    BBMULTICONFIG = "aarch64 x86 riscv64"
+    BBPATH .= ":${TOPDIR}/.."
+  image-install: |
+    IMAGE_INSTALL:append = " mlkem-consumer-test"
+  debug-tweaks: |
+    EXTRA_IMAGE_FEATURES += "allow-root-login allow-empty-password serial-autologin-root empty-root-password"
+  sdk: |
+    TOOLCHAIN_TARGET_TASK:append = " mlkem-buildsys-dev mlkem-buildsys-staticdev"
+
+header:
+  version: 19
+
+build_system: openembedded
+
+repos:
+  openembedded-core:
+    url: https://git.openembedded.org/openembedded-core
+    branch: master
+    path: sources/openembedded-core
+    layers:
+      meta:
+
+  meta-yocto:
+    url: https://git.yoctoproject.org/git/meta-yocto
+    branch: master
+    path: sources/meta-yocto
+    layers:
+      meta-poky:
+      meta-yocto-bsp:
+
+  yocto-docs:
+    url: https://git.yoctoproject.org/git/yocto-docs
+    branch: master
+    path: sources/yocto-docs
+    layers: {}
+
+  bitbake:
+    url: https://git.openembedded.org/bitbake
+    branch: master
+    path: sources/openembedded-core/bitbake
+    layers: {}
+
+

@@ -1,0 +1,7 @@
+build/
+.vscode
+.kas_shell_history
+sources/meta-yocto/
+sources/openembedded-core/
+sources/yocto-docs/
+

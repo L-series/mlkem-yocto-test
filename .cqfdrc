@@ -1,0 +1,8 @@
+[project]
+org='pq-code'
+name='mlkem-yocto-test'
+
+[build]
+command='kas build'
+tar_options='-h'
+tar_transform='yes'
