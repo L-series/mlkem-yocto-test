@@ -84,26 +84,10 @@ CFLAGS += "${@'-DMLK_CONFIG_KEYGEN_PCT' if d.getVar('MLKEM_KEYGEN_PCT') == '1' e
 CFLAGS += "${@'-DMLK_CONFIG_SERIAL_FIPS202_ONLY' if d.getVar('MLKEM_SERIAL_FIPS202') == '1' else ''}"
 CFLAGS += "${@'-DMLK_CONFIG_NO_RANDOMIZED_API' if d.getVar('MLK_CONFIG_NO_RANDOMIZED_API') == '1' else ''}"
 
-# ── Map Yocto TARGET_ARCH to auto.mk's ARCH values ──
-def get_mlkem_arch(d):
-    """Translate OE TARGET_ARCH to the ARCH token auto.mk expects."""
-    arch = d.getVar('TARGET_ARCH') or ''
-    mapping = {
-        'aarch64':      'aarch64',
-        'aarch64_be':   'aarch64_be',
-        'x86_64':       'x86_64',
-        'x86-64':       'x86_64',
-        'riscv64':      'riscv64',
-        'riscv32':      'riscv32',
-        'powerpc64le':  'powerpc64le',
-        'arm':          'arm',
-    }
-    return mapping.get(arch, 'unknown')
-
 # ── Build feature-detection overrides for cross-compilation ──
 def get_host_feature_overrides(d):
     """Return MK_HOST_SUPPORTS_* overrides so auto.mk skips /proc/cpuinfo."""
-    arch = ${TARGET_ARCH} 
+    arch = d.getVar('TARGET_ARCH')
     flags = []
     if arch == 'aarch64':
         flags.append('MK_HOST_SUPPORTS_SHA3=%s' % d.getVar('MLKEM_TARGET_SHA3'))
@@ -138,7 +122,7 @@ def get_host_feature_overrides(d):
 #   BUILD_DIR=${B}   — keep build artefacts inside Yocto's build directory.
 #
 EXTRA_OEMAKE = " \
-    ARCH=${@get_mlkem_arch(d)} \
+    ARCH=${TARGET_ARCH} \
     AUTO=1 \
     OPT=${@'1' if d.getVar('MLKEM_NATIVE_BACKEND') == '1' else '0'} \
     BUILD_DIR=${B} \
